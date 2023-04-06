@@ -9,13 +9,16 @@ import (
 
 func main() {
 	initLogger()
-	pos := initMysql()
 	c, _ := initCanal()
 
 	c.SetEventHandler(&MyEventHandler{})
+	pos, err := c.GetMasterPos()
+	if err != nil {
+		log.Printf("GetMasterPos error:%v", err)
+	}
 	c.RunFrom(pos)
 
-	err := c.Run()
+	err = c.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,5 +44,4 @@ func initCanal() (*canal.Canal, error) {
 
 func release() {
 	logFile.Close()
-	DB.Close()
 }
