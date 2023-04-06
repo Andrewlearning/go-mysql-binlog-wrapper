@@ -6,4 +6,6 @@ const (
 	DbPassWord = "rootroot"
 	DbName     = "entryTask"
 	TableName  = "e1"
+
+	LogPath = "./log/data.log"
 )

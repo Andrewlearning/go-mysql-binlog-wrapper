@@ -4,19 +4,23 @@ import (
 	"log"
 
 	"github.com/go-mysql-org/go-mysql/canal"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
+	initLogger()
+	pos := initMysql()
 	c, _ := initCanal()
 
-	// Register a handler to handle RowsEvent
 	c.SetEventHandler(&MyEventHandler{})
+	c.RunFrom(pos)
 
-	// Start canal
 	err := c.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	defer release()
 }
 
 func initCanal() (*canal.Canal, error) {
@@ -33,4 +37,9 @@ func initCanal() (*canal.Canal, error) {
 		return nil, err
 	}
 	return c, nil
+}
+
+func release() {
+	logFile.Close()
+	DB.Close()
 }

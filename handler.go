@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/go-mysql-org/go-mysql/canal"
@@ -17,17 +15,15 @@ func (h *MyEventHandler) String() string {
 }
 
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
-	rowData := make(map[string]interface{})
+	rowDataOld := make(map[string]interface{})
+	rowDataNew := make(map[string]interface{})
 	for i, col := range e.Table.Columns {
-		rowData[col.Name] = e.Rows[0][i]
+		rowDataOld[col.Name] = e.Rows[0][i]
+		rowDataNew[col.Name] = e.Rows[1][i]
 	}
 
-	jsonData, err := json.Marshal(rowData)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(string(jsonData))
+	log.Printf("[binlog][old] %v", rowDataOld)
+	log.Printf("[binlog][new] %v", rowDataNew)
 
 	return nil
 }
